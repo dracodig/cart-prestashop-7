@@ -52,6 +52,8 @@ class MercadoPagoWalletButtonModuleFrontController extends ModuleFrontController
             }
 
             $this->getResponse($createPreference, 500);
+        } catch (PaymentInitiationBlocked $held) {
+            $preference->respondPaymentHold();
         } catch (Exception $err) {
             MPLog::generate('Exception Message: ' . $err->getMessage());
             $this->redirectError($preference, Tools::displayError());
@@ -72,8 +74,8 @@ class MercadoPagoWalletButtonModuleFrontController extends ModuleFrontController
             'preference' => $preference,
         ];
 
-        echo json_encode($response);
         http_response_code($code);
+        echo json_encode($response);
         exit;
     }
 

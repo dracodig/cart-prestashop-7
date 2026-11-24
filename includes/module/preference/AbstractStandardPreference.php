@@ -49,6 +49,8 @@ abstract class AbstractStandardPreference extends AbstractPreference
         $payloadParent = $this->getCommonPreference($cart);
 
         if ($discount != 0) {
+            // The wallet button discount is absorbed by the existing item lines instead of being
+            // appended as a negative "Discount" item, which Mercado Pago rejects.
             $totalInfo = $this->mpuseful->getCorrectedTotal($cart, 'wallet_button');
             $items = $this->reconcileItemsToTotal($items, $totalInfo['amount_with_round']);
         }

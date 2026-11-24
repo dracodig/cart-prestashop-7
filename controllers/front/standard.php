@@ -53,6 +53,11 @@ class MercadoPagoStandardModuleFrontController extends ModuleFrontController
             }
 
             $this->redirectError($preference, Tools::displayError());
+        } catch (PaymentInitiationBlocked $held) {
+            if (!empty($preference->settings['MERCADOPAGO_STANDARD_MODAL'])) {
+                $preference->respondPaymentHold();
+            }
+            $preference->redirectPaymentHold();
         } catch (Exception $e) {
             MPLog::generate('Exception Message: ' . $e->getMessage());
             $this->redirectError($preference, Tools::displayError());
@@ -128,8 +133,8 @@ class MercadoPagoStandardModuleFrontController extends ModuleFrontController
             'preference' => $preference,
         ];
 
-        echo json_encode($response);
         http_response_code($code);
+        echo json_encode($response);
         exit;
     }
 
